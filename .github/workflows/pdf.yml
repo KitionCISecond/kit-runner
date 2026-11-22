@@ -1,0 +1,36 @@
+name: pdf
+
+# Runs Kition's kit CI (KitionAI/kition .github/workflows/kit-ci.yml at main) for one commit of
+# the public repository KitionAI/kition-pdf. Written by Kition's scripts/kit-ci-runner-repo.mjs;
+# started by Kition's scripts/kit-ci.sh (gh workflow run pdf.yml -f sha=<commit>), which finds
+# the run by its name. A newer dispatch for pdf cancels the older one.
+
+on:
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: The commit of KitionAI/kition-pdf to test (the full 40-character SHA)
+        required: true
+        type: string
+      ref_note:
+        description: A note for humans (where the commit comes from); the run does not read it
+        required: false
+        type: string
+        default: ''
+
+run-name: pdf ${{ inputs.sha }}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pdf
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    uses: KitionAI/kition/.github/workflows/kit-ci.yml@main
+    with:
+      kit: pdf
+      repository: KitionAI/kition-pdf
+      ref: ${{ inputs.sha }}

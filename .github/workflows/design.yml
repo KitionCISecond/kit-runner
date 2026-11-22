@@ -1,0 +1,36 @@
+name: design
+
+# Runs Kition's kit CI (KitionAI/kition .github/workflows/kit-ci.yml at main) for one commit of
+# the public repository KitionAI/kition-design. Written by Kition's scripts/kit-ci-runner-repo.mjs;
+# started by Kition's scripts/kit-ci.sh (gh workflow run design.yml -f sha=<commit>), which finds
+# the run by its name. A newer dispatch for design cancels the older one.
+
+on:
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: The commit of KitionAI/kition-design to test (the full 40-character SHA)
+        required: true
+        type: string
+      ref_note:
+        description: A note for humans (where the commit comes from); the run does not read it
+        required: false
+        type: string
+        default: ''
+
+run-name: design ${{ inputs.sha }}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: design
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    uses: KitionAI/kition/.github/workflows/kit-ci.yml@main
+    with:
+      kit: design
+      repository: KitionAI/kition-design
+      ref: ${{ inputs.sha }}
